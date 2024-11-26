@@ -12,7 +12,7 @@
             <a href="#" id="itemCostumerPaymentMethod" class="btn btn-outline-light" data-bs-target="#modalCostumerPaymentMethod" data-bs-toggle="modal">Formas de Pagamento</a>
         </div>
         <div class="d-grid gap-2 mb-2">
-            <a href="#" id="itemOrderSummary" class="btn btn-outline-light" data-bs-target="#modalOrderSummary" data-bs-toggle="modal">Resumo do pedido</a>
+            <a href="#" id="itemListOrders" class="btn btn-outline-light" data-bs-target="#modalOrderList" data-bs-toggle="modal">Pedidos Realizados</a>
         </div>
         <div class="d-grid gap-2 mb-2">
             <a href="<?= $router->route('costumer.leave') ?>" class="btn btn-outline-light">Sair</a>

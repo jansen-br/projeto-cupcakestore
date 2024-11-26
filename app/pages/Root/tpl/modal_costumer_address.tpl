@@ -9,7 +9,6 @@
                 </div>
                 <button type="button" class="btn btn-light rounded-circle" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times"></i></button>
             </div>
-            <?= $this->insert('alert') ?>
             <div id="modalCostumerAddressBody" class="modal-body"></div>
             <?php if (!empty($cart)): ?>
                 <div class="modal-footer border-0">

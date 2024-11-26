@@ -37,12 +37,14 @@ $this->stop();
     ?>
 </article>
 
+<?php $this->insert('root::modal_alert'); ?>
 <?php $this->insert('root::modal_product'); ?>
 <?php $this->insert('root::modal_cart'); ?>
 <?php $this->insert('root::modal_order'); ?>
 <?php $this->insert('root::modal_costumer_address'); ?>
 <?php $this->insert('root::modal_costumer_payment_method'); ?>
 <?php $this->insert('root::modal_order_summary'); ?>
+<?php $this->insert('root::modal_order_list'); ?>
 
 <?php $this->start('js'); ?>
 <script src="<?= $router->route('root') ?>/assets/js/cp.productDataList.js"></script>
@@ -398,9 +400,15 @@ $this->stop();
             },
             {
                 'render.order': '<?= $router->route('render.order') ?>'
-            }, 
+            },
             {
                 'finalize.order': '<?= $router->route('finalize.order') ?>'
+            },
+            {
+                'render.order.summary': '<?= $router->route('render.order.summary') ?>'
+            },
+            {
+                'list.orders': '<?= $router->route('list.orders') ?>'
             }
         ];
 
@@ -409,6 +417,107 @@ $this->stop();
                 return url[key];
             }
         }
+    }
+
+    /** MODAL ORDER SUMMARY */
+    const modalOrderSummary = document.getElementById('modalOrderSummary').addEventListener('show.bs.modal', event => {
+        let target = event.target;
+        let frame = target.querySelectorAll('[data-cp-frame-content]');
+        let route = target.dataset.cpFrameRoute;
+
+        let data = {
+            'id': 2
+        };
+
+        $.ajax({
+            url: getUrlRoute(route),
+            method: 'POST',
+            data: data,
+            success: response => {
+                replacePlaceholders(target, response);
+                $('[data-cp-frame-content] .cash-br').mask('9999,00')
+            },
+            error: function(xhr, status, error) {
+                console.error(`Error: ${error}`);
+            }
+        });
+    });
+
+    /** MODAL ORDER LIST */
+    const modalOrderList = document.getElementById('modalOrderList').addEventListener('show.bs.modal', event => {
+        let target = event.target;
+        let frame = target.querySelectorAll('[data-cp-frame-content]');
+        let route = target.dataset.cpFrameRoute;
+
+        $.ajax({
+            url: getUrlRoute(route),
+            method: 'POST',
+            success: response => {
+                console.log(response);
+                replacePlaceholders(target, response);
+            },
+            error: function(xhr, status, error) {
+                console.error(`Error: ${error}`);
+            }
+        });
+    });
+
+    /** REPLACE HOLDERS */
+    function replacePlaceholders(element, data) {
+        // Substituir no conteúdo do texto
+        let objs = Object.keys(data);
+        console.log(objs);
+
+        objs.forEach((i) => {
+
+            let elem = element.querySelector('[data-cp-frame-content="' + i + '"]');
+            let data_item = data[i];
+
+            if (elem) {
+                if (!Array.isArray(data_item)) {
+                    replacePlaceholdersTree(elem, data_item);
+                } else {
+                    data_item.forEach(item => {
+                        const itemClone = elem.firstElementChild.cloneNode(true);
+                        replacePlaceholdersTree(itemClone, item);
+                        elem.appendChild(itemClone);
+                    });
+                    elem.firstElementChild.remove();
+                }
+            }
+        });
+
+
+    }
+
+    function replacePlaceholdersTree(element, data) {
+
+        // Substituir no conteúdo do texto
+        element.childNodes.forEach(node => {
+            if (node.nodeType === Node.TEXT_NODE) {
+                node.textContent = node.textContent.replace(
+                    /{:([a-zA-Z0-9_]+)}/g,
+                    // (_, key) => data[key] || `{:${key}}`
+                    (_, key) => data[key] || ``
+                );
+            }
+        });
+
+        // Substituir nos atributos do elemento
+        Array.from(element.attributes).forEach(attr => {
+            attr.value = attr.value.replace(
+                /{:([a-zA-Z0-9_]+)}/g,
+                // (_, key) => data[key] || `{:${key}}`
+                (_, key) => data[key] || ``
+            );
+        });
+
+        // Processar os filhos recursivamente
+        element.childNodes.forEach(child => {
+            if (child.nodeType === Node.ELEMENT_NODE) {
+                replacePlaceholdersTree(child, data);
+            }
+        });
     }
 
     /** REMOVE ELEMENT TARGET */
@@ -421,23 +530,53 @@ $this->stop();
 
     /** OPEN MODAL */
     function openModal(modalId) {
-        if (modalId) {
-            console.log(modalId);
-            btn_modal = document.getElementById(modalId);
-            if (btn_modal) {
-                btn_modal.click();
+        // if (modalId) {
+        //     console.log(modalId);
+        //     btn_modal = document.getElementById(modalId);
+        //     if (btn_modal) {
+        //         btn_modal.click();
+        //     }
+        // }
+        if (var_alert) {
+            let obj = document.getElementById('modalAlert');
+            let modalAlert = new bootstrap.Modal(obj, {
+                keyboard: false
+            });
+
+
+            obj.addEventListener('show.bs.modal', (event) => {
+                let target = event.target;
+                let alertObj = {
+                    alert: var_alert
+                }
+                replacePlaceholders(target, alertObj);
+            });
+
+            modalAlert.show();
+
+            obj.addEventListener('hidden.bs.modal', () => {
+                if (modalId) {
+                    btn_modal = document.getElementById(modalId);
+                    if (btn_modal) {
+                        btn_modal.click();
+                    }
+                }
+            });
+        } else {
+            if (modalId) {
+                btn_modal = document.getElementById(modalId);
+                if (btn_modal) {
+                    btn_modal.click();
+                }
             }
         }
+
     }
 
     /** ALERT */
-    const alert = <?= !empty($alert) ? json_encode($alert) : '[]' ?>;
+    const var_alert = <?= !empty($alert) ? json_encode($alert) : 'null' ?>;
 
-    function openAlert() {
-
-    }
-
-    const modalId = <?= !empty($modal) ? json_encode($modal) : '""' ?>;
+    const modalId = <?= !empty($modal) ? json_encode($modal) : 'null' ?>;
     openModal(modalId);
 
     /** CREDIT CARD FLAG */

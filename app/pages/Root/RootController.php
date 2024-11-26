@@ -3,6 +3,7 @@
 namespace App\Pages\Root;
 
 use App\AppController;
+use App\Lib\Alert;
 use App\Lib\Session;
 
 class RootController extends AppController
