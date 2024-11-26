@@ -1,0 +1,157 @@
+:root {
+    --primary-30: #A3A2C7;
+    --primary-50: #9699BC;
+    --primary-100: #8056af;
+    --primary-200: #513077;
+    --primary-300: #FFFFFF;
+    --accent-100: #D6C6E1;
+    --accent-200: #9A73B5;
+    --text-100: #4A4A4A;
+    --text-200: #878787;
+    --bg-100: #F5F3F7;
+    --bg-200: #E9E4ED;
+    --bg-300: #FFFFFF;
+}
+
+.bg-cp-primary {
+    background: var(--primary-200);
+}
+
+.bg-cp-accent {
+    background: var(--accent-200);
+    background: linear-gradient(var(--primary-50) 0%, var(--primary-30) 100%);
+}
+
+#cpMenu {
+    height: 64px;
+}
+
+.container {
+    padding-left: 24px;
+    padding-right: 24px;
+}
+
+#cpBrand {
+    display: block;
+    position: absolute;
+    width: 120px;
+    height: auto;
+}
+
+#cpCart,
+#cpUser {
+    width: 48px;
+    height: 48px;
+    /* background-color: #fff;
+    border-radius: 50%; */
+
+}
+
+#cpCart img,
+#cpUser img {
+    width: 100%;
+    height: 100%;
+    padding: 8px;
+}
+
+#cpCart img,
+#cpUser img g {
+    fill: red;
+
+}
+
+.rounded {
+    border-radius: 24px !important;
+}
+
+#cpCarousel .carousel-inner{
+    height: 80vh;
+}
+
+#cpCarousel .carousel-item {
+    width: 100%;
+    height: 100%;
+    background: var(--cp-bg-url);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+
+    transition: opacity 0.8s, transform 6s ease-in;
+}
+
+#cpCarousel .carousel-item.active {
+    position: relative;
+    transform: scale(1.2);
+}
+
+#cpCarousel .carousel-inner::after {
+    content: " ";
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: rgb(81, 48, 119);
+    background: radial-gradient(circle, rgba(81, 48, 119, 0) 0%, rgba(81, 48, 119, 0.8) 100%);
+    background-size: 120%;
+    background-position: center center;
+    z-index: 1;
+}
+
+#cpTools {
+    display: flex;
+    justify-content: center;
+    gap: 2;
+}
+
+
+#cpSearch {
+    position: relative;
+}
+
+#txtSearch {
+    width: 360px;
+    height: 48px;
+    background-color: var(--bg-100);
+    border: none;
+    border-radius: 24px;
+    padding: 0px 48px 0px 16px;
+    box-sizing: border-box;
+}
+
+#btnSearch {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    right: 8px;
+    top: 8px;
+}
+
+#cpOptions {
+    width: 48px;
+    height: 48px;
+    border-radius: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--bg-100);
+}
+
+#cpOptions img {
+    width: 40px;
+    height: 40px;
+}
+
+#cpSlide{
+    width: 100%;
+    height: 80px;
+    overflow: hidden;
+}
+
+#cpSlide div{
+    width: 80px;
+    height: 80px;
+    background-color: red;
+}

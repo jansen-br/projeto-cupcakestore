@@ -1,0 +1,26 @@
+{
+    "name": "jan100-br/motor",
+    "description": "Simple engine for application php",
+    "license": "proprietary",
+    "minimum-stability": "dev",
+    "version": "1.0.0-dev",
+    "authors": [
+        {
+            "name": "Jansen Lira",
+            "email": "jan100sys@gmail.com",
+            "homepage": "http://jansenl.com",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "App\\" : "app/"
+        }
+    },
+    "require": {
+        "php": ">=8.0",
+        "coffeecode/router": "2.0.*",
+        "league/plates": "3.*",
+        "phpmailer/phpmailer": "dev-master"
+    }
+}

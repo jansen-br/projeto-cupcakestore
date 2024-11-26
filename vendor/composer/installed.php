@@ -1,0 +1,52 @@
+<?php return array(
+    'root' => array(
+        'name' => 'jan100-br/motor',
+        'pretty_version' => '1.0.0-dev',
+        'version' => '1.0.0.0-dev',
+        'reference' => null,
+        'type' => 'library',
+        'install_path' => __DIR__ . '/../../',
+        'aliases' => array(),
+        'dev' => true,
+    ),
+    'versions' => array(
+        'coffeecode/router' => array(
+            'pretty_version' => '2.0.2',
+            'version' => '2.0.2.0',
+            'reference' => 'a16770ae952ce3f91a04035a09be610a030e049c',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../coffeecode/router',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'jan100-br/motor' => array(
+            'pretty_version' => '1.0.0-dev',
+            'version' => '1.0.0.0-dev',
+            'reference' => null,
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../../',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'league/plates' => array(
+            'pretty_version' => 'v3.x-dev',
+            'version' => '3.9999999.9999999.9999999-dev',
+            'reference' => 'ec07462f53d38dd4a3323e288c41bffe86e9098e',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../league/plates',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'phpmailer/phpmailer' => array(
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
+            'reference' => 'f658da94f1d3b8f9b8a28f10306ee79646449830',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../phpmailer/phpmailer',
+            'aliases' => array(
+                0 => '9999999-dev',
+            ),
+            'dev_requirement' => false,
+        ),
+    ),
+);
