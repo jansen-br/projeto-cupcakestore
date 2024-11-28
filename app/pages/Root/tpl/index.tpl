@@ -17,7 +17,7 @@ $this->stop();
         font-size: 0.7em;
     }
 
-    [data-cp-frame-content]>*:first-child span {
+    .cp-placeholder span {
         display: inline-block;
         min-height: 1em;
         vertical-align: middle;
@@ -36,6 +36,35 @@ $this->stop();
         animation-timeline: auto;
         animation-range-start: normal;
 
+    }
+
+    *[data-status] span {
+        display: none;
+    }
+
+
+    *[data-status="'pending"]:after {
+        content: 'pendente';
+    }
+
+    *[data-status="paid"]:after {
+        content: 'pago';
+    }
+
+    *[data-status="shipped"]:after {
+        content: 'Enviado';
+    }
+
+    *[data-status="delivered"]:after {
+        content: 'entregue';
+    }
+
+    *[data-status="cancelled"]:after {
+        content: 'cancelado';
+    }
+
+    *[data-status]::after {
+        text-transform: capitalize;
     }
 
     @keyframes place-holder {
@@ -75,6 +104,7 @@ $this->stop();
 
 <?php $this->start('js'); ?>
 <script src="<?= $router->route('root') ?>/assets/js/cp.productDataList.js"></script>
+<script src="<?= $router->route('root') ?>/assets/js/mustache.js"></script>
 <script>
     /** DATALIST */
     const url_products_list = '<?= $router->route('product.list'); ?>';
@@ -330,13 +360,45 @@ $this->stop();
     }
 
     /** MODAL PAYMENT METHOD */
-    const modalCostumerPaymentMethod = document.getElementById('modalCostumerPaymentMethod');
-    const url_CostumerPaymentMethod = '<?= $router->route('costumer.render.payment.method') ?>';
-    modalCostumerPaymentMethod.addEventListener('show.bs.modal', event => {
-        showCostumerPaymentMethod(
-            url_CostumerPaymentMethod,
-            modalCostumerPaymentMethod
-        );
+    document.getElementById('modalCostumerPaymentMethod').addEventListener('show.bs.modal', event => {
+        let btn = event.relatedTarget;
+        let target = event.target;
+        let route = target.dataset.cpFrameRoute;
+
+        $.ajax({
+            url: getUrlRoute(route),
+            method: 'POST',
+            success: response => {
+                console.log(response);
+
+                const template = target.querySelector('.cp-template').innerHTML;
+                const rendered = Mustache.render(template, response);
+                target.querySelector('.cp-render').innerHTML = rendered;
+                target.querySelector('.placeholder-glow').style.display = 'none';
+
+                eventSetPreferedCreditCard(
+                    target.querySelectorAll('input[name="prefered"]'),
+                    'costumer.set.prefered.creditcard'
+                );
+
+                eventRemoveItem(
+                    target.querySelectorAll('button[data-cp-method]'),
+                    'costumer.remove.creditcard'
+                );
+
+                $('#PaymentMethodNumber').mask('9999-9999-9999-9999').keyup((el) => {
+                    if (el.target.value.length == 19) {
+                        let brand = getCardBrand(el.target.value);
+                        console.log(brand);
+                        document.getElementById('PaymentMethodFlag').value = brand;
+                        document.getElementById('PaymentMethodFlagLabel').innerHTML = brand;
+                    }
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error(`Error: ${error}`);
+            }
+        });
     });
 
     function showCostumerPaymentMethod(url, elem) {
@@ -369,14 +431,12 @@ $this->stop();
         });
     }
 
-    const url_PreferedCreditCard = '<?= $router->route('costumer.set.prefered.creditcard') ?>';
-
-    function eventSetPreferedCreditCard() {
-        modalCostumerPaymentMethod.querySelectorAll('input[name="prefered"]').forEach(el => {
+    function eventSetPreferedCreditCard(elems, route) {
+        elems.forEach(el => {
             el.addEventListener('change', function() {
                 const creditcard_id = this.dataset.cpCreditcardId;
                 $.ajax({
-                    url: url_PreferedCreditCard,
+                    url: getUrlRoute(route),
                     method: 'POST',
                     data: {
                         creditcard_id: creditcard_id
@@ -391,10 +451,8 @@ $this->stop();
     }
 
 
-    function eventRemoveItem(elem) {
-
-        const item = document.querySelectorAll(elem);
-        item.forEach(el => {
+    function eventRemoveItem(elems, route) {
+        elems.forEach(el => {
             el.addEventListener('click', function() {
                 let id = this.dataset.cpItemId;
                 let target = this.dataset.cpTarget;
@@ -423,7 +481,13 @@ $this->stop();
 
     function getUrlRoute(key) {
         const routes = [{
+                'costumer.render.payment.method': '<?= $router->route('costumer.render.payment.method') ?>'
+            },
+            {
                 'costumer.remove.creditcard': '<?= $router->route('costumer.remove.creditcard') ?>'
+            },
+            {
+                'costumer.set.prefered.creditcard': '<?= $router->route('costumer.set.prefered.creditcard') ?>'
             },
             {
                 'render.order': '<?= $router->route('render.order') ?>'
@@ -451,7 +515,6 @@ $this->stop();
         let btn = event.relatedTarget;
         let order_id = btn.dataset.cpOrderId;
         let target = event.target;
-        let frames = target.querySelectorAll('[data-cp-frame-content]');
         let route = target.dataset.cpFrameRoute;
 
         let data = {
@@ -464,9 +527,13 @@ $this->stop();
             data: data,
             success: response => {
                 console.log(response);
-                replacePlaceholders(frames, response);
-                $('[data-cp-frame-receive] .cash-br').mask('9999,00');
-                $('[data-cp-frame-receive] .datetime').each(function() {
+
+                const template = target.querySelector('.cp-template').innerHTML;
+                const rendered = Mustache.render(template, response);
+                target.querySelector('.cp-render').innerHTML = rendered;
+                target.querySelector('.placeholder-glow').style.display = 'none';
+                $('.cp-render .cash-br', target).mask('9999,00');
+                $('.cp-render .datetime', target).each(function() {
                     let originalDatetime = $(this).text();
                     let formattedDatetime = convertDatetime(originalDatetime);
                     $(this).text(formattedDatetime);
@@ -480,7 +547,7 @@ $this->stop();
 
     document.getElementById('modalOrderSummary').addEventListener('hidden.bs.modal', event => {
         let target = event.target;
-        removePlaceHolders(target);
+        target.querySelector('.placeholder-glow').style.display = 'block';
     });
 
     /** MODAL ORDER LIST */
@@ -493,8 +560,11 @@ $this->stop();
             url: getUrlRoute(route),
             method: 'POST',
             success: response => {
-                replacePlaceholders(frames, response);
-                $('[data-cp-frame-receive] .datetime').each(function() {
+                const template = target.querySelector('.cp-template').innerHTML;
+                const rendered = Mustache.render(template, response);
+                target.querySelector('.cp-render').innerHTML = rendered;
+                target.querySelector('.placeholder-glow').style.display = 'none';
+                $('.cp-render .datetime', target).each(function() {
                     let originalDatetime = $(this).text();
                     let formattedDatetime = convertDatetime(originalDatetime);
                     $(this).text(formattedDatetime);
@@ -508,85 +578,9 @@ $this->stop();
 
     document.getElementById('modalOrderList').addEventListener('hidden.bs.modal', event => {
         let target = event.target;
-        removePlaceHolders(target);
+        target.querySelector('.placeholder-glow').style.display = 'block';
     });
 
-    /** REPLACE HOLDERS */
-    function replacePlaceholders(elements, data) {
-        elements.forEach(element => {
-            let key = element.dataset.cpFrameContent;
-            let data_item = data[key];
-
-            if (Array.isArray(data_item)) {
-                data_item.forEach(item => {
-                    let first = element.firstElementChild.cloneNode(true);
-                    first.dataset.cpFrameReceive = key;
-                    replacePlaceholdersTree(first, item);
-                    element.appendChild(first);
-                });     
-            } else {
-                let first = element.firstElementChild.cloneNode(true);
-                first.dataset.cpFrameReceive = key;
-                replacePlaceholdersTree(first, data_item);
-                element.appendChild(first);
-            }
-
-            element.firstElementChild.style.display = "none";
-        });
-    }
-
-    function objIsEmpty(obj) {
-        for (let prop in obj) {
-            return false
-        }
-        return true;
-    }
-
-    function arrayIsEmpty(arr) {
-        if (arr.length > 0) {
-            return false;
-        }
-        return true;
-    }
-
-    function replacePlaceholdersTree(element, data) {
-
-        element.childNodes.forEach(node => {
-            if (node.nodeType === Node.TEXT_NODE) {
-                node.textContent = node.textContent.replace(
-                    /{:([a-zA-Z0-9_]+)}/g,
-                    // (_, key) => data[key] || `{:${key}}`
-                    (_, key) => data[key] || ``
-                );
-            }
-        });
-
-        Array.from(element.attributes).forEach(attr => {
-            attr.value = attr.value.replace(
-                /{:([a-zA-Z0-9_]+)}/g,
-                // (_, key) => data[key] || `{:${key}}`
-                (_, key) => data[key] || ``
-            );
-        });
-
-        element.childNodes.forEach(child => {
-            if (child.nodeType === Node.ELEMENT_NODE) {
-                replacePlaceholdersTree(child, data);
-            }
-        });
-    }
-
-    function removePlaceHolders(target) {
-        const elements_receive = target.querySelectorAll('[data-cp-frame-receive]');
-        for (let element of elements_receive) {
-            element.remove();
-        }
-
-        const elements_content = target.querySelectorAll('[data-cp-frame-content]');
-        for (let element of elements_content) {
-            element.firstElementChild.removeAttribute('style');
-        }
-    }
 
     /** REMOVE ELEMENT TARGET */
     function removeElement(target_elem_id = null) {
@@ -650,6 +644,7 @@ $this->stop();
     /** CREDIT CARD FLAG */
     function getCardBrand(cardNumber) {
         let card_number = cardNumber.replace(/[^0-9]/g, '');
+        console.log(card_number);
 
         brands = [{
                 'pattern': /^4[0-9]{12}(?:[0-9]{3})?$/,

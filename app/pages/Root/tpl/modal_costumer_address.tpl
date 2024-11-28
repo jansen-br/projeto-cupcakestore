@@ -4,7 +4,7 @@
         <div class="modal-content">
             <div class="modal-header justify-content-between bg-cp-primary text-white">
                 <div class="modal-title d-flex justify-content-start align-items-center">
-                    <img width="32" height="32" src="<?= $router->route('root') ?>/assets/img/cart.svg" alt="" class="me-3">
+                    <img width="32" height="32" src="<?= $router->route('root') ?>/assets/img/location.svg" alt="" class="me-3">
                     <div class="h5 m-0">Endereço de Entrega</div>
                 </div>
                 <button type="button" class="btn btn-light rounded-circle" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times"></i></button>

@@ -82,40 +82,18 @@ class OrderController extends CostumerController
 
     public function renderOrderSummary($vars)
     {
-        $order_summary = [
-            'order' => [],
-            'order_items' => [],
-            'address' => [],
-            'payment' => [],
-            'total' => []
-        ];
+
 
         if (!empty($vars['order_id'])) {
             $order_summary['order'] = ($this->model->getOrder($vars['order_id'], $this->costumer['id']));
         } else {
             $order_summary['order'] = ($this->model->getLastOrder($this->costumer['id']));
         }
-
-        if (!empty($order_summary['order']['total_amount'])) {
-            $order_summary['total'] = [
-                'value' => $order_summary['order']['total_amount']
-            ];
-        }
-
+        
         if (!empty($order_summary['order']['id'])) {
             $order_summary['order']['number'] = str_pad($order_summary['order']['id'], 5, '0', STR_PAD_LEFT);
             $order_summary['order_items'] = $this->model->getOrderItems($order_summary['order']['id']);
-
-            if (!empty($order_summary['order']['address'])) {
-                $order_summary['address'] = json_decode($order_summary['order']['address']);
-            }
-
-            if (!empty($order_summary['order']['payment'])) {
-                $order_summary['payment'] = json_decode($order_summary['order']['payment']);
-            }
         }
-
-        $order_summary['empty'] = ['message' => empty($order_summary['order']) ? 'Nenhum item encontrado!' : ''];
 
         header('Content-Type: application/json;charset=utf-8');
         echo json_encode($order_summary);
@@ -123,22 +101,19 @@ class OrderController extends CostumerController
 
     public function listOrders()
     {
-
-        $order_list = [];
+        $arr = [];
         // $this->costumer['id'] = 8;
         if (!empty($this->costumer['id'])) {
             $orders = $this->model->listOrders($this->costumer['id']);
 
-            $order_list['order_list'] = array_map(function ($item) {
+            $arr['order_list'] = array_map(function ($item) {
                 $item['number'] = $this->defNumberOrder($item['id']);
                 return $item;
             }, $orders);
         }
 
-        $order_list['empty'] = ['message' => empty($order_list['order_list']) ? 'Nenhum item encontrado!' : ''];
-
         header('Content-Type: application/json;charset=utf-8');
-        echo json_encode($order_list);
+        echo json_encode($arr);
     }
 
     private function defNumberOrder(int $str)

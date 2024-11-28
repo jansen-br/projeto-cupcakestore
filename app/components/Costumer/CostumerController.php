@@ -21,9 +21,7 @@ class CostumerController extends AppController
         $this->costumer = Session::get('costumer');
     }
 
-    private function setCostumerObjs(){
-        
-    }
+    private function setCostumerObjs() {}
 
     public function access($vars)
     {
@@ -83,13 +81,15 @@ class CostumerController extends AppController
 
     public function renderPaymentMethod()
     {
+
+        $array = [];
+
         if (!empty($this->costumer['id'])) {
-            $creditcards = $this->model->getCreditCards($this->costumer['id']);
+            $array['creditcard'] = $this->model->getCreditCards($this->costumer['id']);
         }
-        $this->view->print('costumer::payment_method', [
-            'costumer' => $this->costumer,
-            'creditcards' => $creditcards
-        ]);
+
+        header('Content-Type: application/json;charset=utf-8');
+        echo json_encode($array);
     }
 
     public function renderAddressDelivery()
@@ -183,7 +183,7 @@ class CostumerController extends AppController
 
     public function setPreferedCreditCard($vars)
     {
-
+        $m = false;
         try {
             if ($this->model->setPreferedCreditCard($this->costumer['id'], $vars['creditcard_id'])) {
                 $m = true;
