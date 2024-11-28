@@ -82,11 +82,24 @@ class OrderController extends CostumerController
 
     public function renderOrderSummary($vars)
     {
-        $order_summary = [];
-        if ($order_id = !empty($vars['order_id'])) {
-            $order_summary['order'] = ($this->model->getOrder($order_id, $this->costumer['id']));
+        $order_summary = [
+            'order' => [],
+            'order_items' => [],
+            'address' => [],
+            'payment' => [],
+            'total' => []
+        ];
+
+        if (!empty($vars['order_id'])) {
+            $order_summary['order'] = ($this->model->getOrder($vars['order_id'], $this->costumer['id']));
         } else {
             $order_summary['order'] = ($this->model->getLastOrder($this->costumer['id']));
+        }
+
+        if (!empty($order_summary['order']['total_amount'])) {
+            $order_summary['total'] = [
+                'value' => $order_summary['order']['total_amount']
+            ];
         }
 
         if (!empty($order_summary['order']['id'])) {
@@ -102,6 +115,8 @@ class OrderController extends CostumerController
             }
         }
 
+        $order_summary['empty'] = ['message' => empty($order_summary['order']) ? 'Nenhum item encontrado!' : ''];
+
         header('Content-Type: application/json;charset=utf-8');
         echo json_encode($order_summary);
     }
@@ -110,14 +125,17 @@ class OrderController extends CostumerController
     {
 
         $order_list = [];
+        // $this->costumer['id'] = 8;
         if (!empty($this->costumer['id'])) {
             $orders = $this->model->listOrders($this->costumer['id']);
 
             $order_list['order_list'] = array_map(function ($item) {
-                $item['number'] = $this->defNumberOrder($item['id']);              
+                $item['number'] = $this->defNumberOrder($item['id']);
                 return $item;
             }, $orders);
         }
+
+        $order_list['empty'] = ['message' => empty($order_list['order_list']) ? 'Nenhum item encontrado!' : ''];
 
         header('Content-Type: application/json;charset=utf-8');
         echo json_encode($order_list);

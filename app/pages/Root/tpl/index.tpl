@@ -16,6 +16,33 @@ $this->stop();
         margin-right: 5px;
         font-size: 0.7em;
     }
+
+    [data-cp-frame-content]>*:first-child span {
+        display: inline-block;
+        min-height: 1em;
+        vertical-align: middle;
+        cursor: wait;
+        background-color: currentcolor;
+        opacity: .5;
+        animation: place-holder 2s ease-in-out infinite;
+        animation-duration: 2s;
+        animation-timing-function: ease-in-out;
+        animation-delay: 0s;
+        animation-iteration-count: infinite;
+        animation-direction: normal;
+        animation-fill-mode: none;
+        animation-play-state: running;
+        animation-name: placeholder-glow;
+        animation-timeline: auto;
+        animation-range-start: normal;
+
+    }
+
+    @keyframes place-holder {
+        50% {
+            opacity: .2;
+        }
+    }
 </style>
 <?php $this->stop(); ?>
 
@@ -420,13 +447,15 @@ $this->stop();
     }
 
     /** MODAL ORDER SUMMARY */
-    const modalOrderSummary = document.getElementById('modalOrderSummary').addEventListener('show.bs.modal', event => {
+    document.getElementById('modalOrderSummary').addEventListener('show.bs.modal', event => {
+        let btn = event.relatedTarget;
+        let order_id = btn.dataset.cpOrderId;
         let target = event.target;
-        let frame = target.querySelectorAll('[data-cp-frame-content]');
+        let frames = target.querySelectorAll('[data-cp-frame-content]');
         let route = target.dataset.cpFrameRoute;
 
         let data = {
-            'id': 2
+            'order_id': order_id
         };
 
         $.ajax({
@@ -434,8 +463,14 @@ $this->stop();
             method: 'POST',
             data: data,
             success: response => {
-                replacePlaceholders(target, response);
-                $('[data-cp-frame-content] .cash-br').mask('9999,00')
+                console.log(response);
+                replacePlaceholders(frames, response);
+                $('[data-cp-frame-receive] .cash-br').mask('9999,00');
+                $('[data-cp-frame-receive] .datetime').each(function() {
+                    let originalDatetime = $(this).text();
+                    let formattedDatetime = convertDatetime(originalDatetime);
+                    $(this).text(formattedDatetime);
+                });
             },
             error: function(xhr, status, error) {
                 console.error(`Error: ${error}`);
@@ -443,18 +478,27 @@ $this->stop();
         });
     });
 
+    document.getElementById('modalOrderSummary').addEventListener('hidden.bs.modal', event => {
+        let target = event.target;
+        removePlaceHolders(target);
+    });
+
     /** MODAL ORDER LIST */
     const modalOrderList = document.getElementById('modalOrderList').addEventListener('show.bs.modal', event => {
         let target = event.target;
-        let frame = target.querySelectorAll('[data-cp-frame-content]');
+        let frames = target.querySelectorAll('[data-cp-frame-content]');
         let route = target.dataset.cpFrameRoute;
 
         $.ajax({
             url: getUrlRoute(route),
             method: 'POST',
             success: response => {
-                console.log(response);
-                replacePlaceholders(target, response);
+                replacePlaceholders(frames, response);
+                $('[data-cp-frame-receive] .datetime').each(function() {
+                    let originalDatetime = $(this).text();
+                    let formattedDatetime = convertDatetime(originalDatetime);
+                    $(this).text(formattedDatetime);
+                });
             },
             error: function(xhr, status, error) {
                 console.error(`Error: ${error}`);
@@ -462,37 +506,51 @@ $this->stop();
         });
     });
 
+    document.getElementById('modalOrderList').addEventListener('hidden.bs.modal', event => {
+        let target = event.target;
+        removePlaceHolders(target);
+    });
+
     /** REPLACE HOLDERS */
-    function replacePlaceholders(element, data) {
-        // Substituir no conteúdo do texto
-        let objs = Object.keys(data);
-        console.log(objs);
+    function replacePlaceholders(elements, data) {
+        elements.forEach(element => {
+            let key = element.dataset.cpFrameContent;
+            let data_item = data[key];
 
-        objs.forEach((i) => {
-
-            let elem = element.querySelector('[data-cp-frame-content="' + i + '"]');
-            let data_item = data[i];
-
-            if (elem) {
-                if (!Array.isArray(data_item)) {
-                    replacePlaceholdersTree(elem, data_item);
-                } else {
-                    data_item.forEach(item => {
-                        const itemClone = elem.firstElementChild.cloneNode(true);
-                        replacePlaceholdersTree(itemClone, item);
-                        elem.appendChild(itemClone);
-                    });
-                    elem.firstElementChild.remove();
-                }
+            if (Array.isArray(data_item)) {
+                data_item.forEach(item => {
+                    let first = element.firstElementChild.cloneNode(true);
+                    first.dataset.cpFrameReceive = key;
+                    replacePlaceholdersTree(first, item);
+                    element.appendChild(first);
+                });     
+            } else {
+                let first = element.firstElementChild.cloneNode(true);
+                first.dataset.cpFrameReceive = key;
+                replacePlaceholdersTree(first, data_item);
+                element.appendChild(first);
             }
+
+            element.firstElementChild.style.display = "none";
         });
+    }
 
+    function objIsEmpty(obj) {
+        for (let prop in obj) {
+            return false
+        }
+        return true;
+    }
 
+    function arrayIsEmpty(arr) {
+        if (arr.length > 0) {
+            return false;
+        }
+        return true;
     }
 
     function replacePlaceholdersTree(element, data) {
 
-        // Substituir no conteúdo do texto
         element.childNodes.forEach(node => {
             if (node.nodeType === Node.TEXT_NODE) {
                 node.textContent = node.textContent.replace(
@@ -503,7 +561,6 @@ $this->stop();
             }
         });
 
-        // Substituir nos atributos do elemento
         Array.from(element.attributes).forEach(attr => {
             attr.value = attr.value.replace(
                 /{:([a-zA-Z0-9_]+)}/g,
@@ -512,12 +569,23 @@ $this->stop();
             );
         });
 
-        // Processar os filhos recursivamente
         element.childNodes.forEach(child => {
             if (child.nodeType === Node.ELEMENT_NODE) {
                 replacePlaceholdersTree(child, data);
             }
         });
+    }
+
+    function removePlaceHolders(target) {
+        const elements_receive = target.querySelectorAll('[data-cp-frame-receive]');
+        for (let element of elements_receive) {
+            element.remove();
+        }
+
+        const elements_content = target.querySelectorAll('[data-cp-frame-content]');
+        for (let element of elements_content) {
+            element.firstElementChild.removeAttribute('style');
+        }
     }
 
     /** REMOVE ELEMENT TARGET */
@@ -616,6 +684,18 @@ $this->stop();
         }
 
         return 'unknown';
+    }
+
+    /** DATETIME CONVERTER */
+    function convertDatetime(mysqlDateTime) {
+        // Dividir a data e a hora
+        let [date, time] = mysqlDateTime.split(' ');
+
+        // Dividir a data em ano, mês e dia
+        let [year, month, day] = date.split('-');
+
+        // Retornar a data no formato dd-mm-yyyy hh:mm:ss
+        return `${day}/${month}/${year} ${time}`;
     }
 </script>
 <?php $this->stop(); ?>

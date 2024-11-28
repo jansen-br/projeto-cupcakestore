@@ -9,18 +9,23 @@
                 </div>
                 <button type="button" class="btn btn-light rounded-circle" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times"></i></button>
             </div>
-            <div id="modalOrderListBody" class="modal-body" data-cp-frame-content="order_list">
-                <div id="order_{:id}" class="border p-2 mb-3">
-                    <div class="row">
-                        <div class="col-10">
-                            <div>Número do pedido: <b>#{:number}</b></div>
-                            <div>Data da compra: {:date_registry}</div>
-                            <div>Status: {:status}</div>
-                        </div>
-                        <div class="col-2 d-flex justify-content-center align-items-center">
-                            <a href="#" class="btn btn-primary rounded-circle" data-bs-toggle="modal" data-bs-target="#modalOrderSummary"><i class="fa fa-arrow-right"></i></a>
+            <div id="modalOrderListBody" class="modal-body">
+                <div data-cp-frame-content="order_list">
+                    <div id="order_{:id}" class="border p-2 mb-3">
+                        <div class="row">
+                            <div class="col-10">
+                                <div>Número do pedido: <span class="fw-bold">#{:number}</span></div>
+                                <div>Data da compra: <span class="datetime">{:date_registry}</span></div>
+                                <div>Status: <span>{:status}</span></div>
+                            </div>
+                            <div class="col-2 d-flex justify-content-center align-items-center">
+                                <a href="#" class="btn btn-primary rounded-circle" data-cp-order-id="{:id}" data-bs-toggle="modal" data-bs-target="#modalOrderSummary"><i class="fa fa-arrow-right"></i></a>
+                            </div>
                         </div>
                     </div>
+                </div>
+                <div data-cp-frame-content="empty">
+                    <div>{:message}</div>
                 </div>
             </div>
         </div>

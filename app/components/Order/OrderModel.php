@@ -10,12 +10,26 @@ class OrderModel extends AppModel
     const ORDER_ITEMS = 'order_items';
     const VIEW_ORDER_ITEMS = 'view_order_items';
 
-    public function getOrder(int $id , int $costumers_id)
+    public function getOrder(int $id, int $costumers_id)
     {
-        $sql = 'SELECT * FROM ' . self::VIEW_ORDER_ITEMS . ' WHERE id = :id AND costumers_id = :costumers_id';
+        $sql = 'SELECT * FROM ' . self::COSTUMER_ORDERS . ' WHERE id = :id AND costumers_id = :costumers_id';
 
         $stmt = $this->con->prepare($sql);
         $stmt->bindParam(':id', $id, $this->con::PARAM_INT, 11);
+        $stmt->bindParam(':costumers_id', $costumers_id, $this->con::PARAM_INT, 11);
+        $stmt->execute();
+
+        if ($data = $stmt->fetch($this->con::FETCH_ASSOC)) {
+            return $data;
+        }
+        return [];
+    }
+
+    public function getLastOrder(int $costumers_id)
+    {
+        $sql = 'SELECT * FROM ' . self::COSTUMER_ORDERS . ' WHERE costumers_id = :costumers_id ORDER BY id DESC LIMIT 1';
+
+        $stmt = $this->con->prepare($sql);
         $stmt->bindParam(':costumers_id', $costumers_id, $this->con::PARAM_INT, 11);
         $stmt->execute();
 
@@ -39,19 +53,7 @@ class OrderModel extends AppModel
         return [];
     }
 
-    public function getLastOrder(int $costumers_id)
-    {
-        $sql = 'SELECT * FROM ' . self::COSTUMER_ORDERS . ' WHERE costumers_id = :costumers_id ORDER BY id DESC LIMIT 1';
 
-        $stmt = $this->con->prepare($sql);
-        $stmt->bindParam(':costumers_id', $costumers_id, $this->con::PARAM_INT, 11);
-        $stmt->execute();
-
-        if ($data = $stmt->fetch($this->con::FETCH_ASSOC)) {
-            return $data;
-        }
-        return [];
-    }
 
     public function listOrders(int $costumers_id)
     {
@@ -93,7 +95,7 @@ class OrderModel extends AppModel
         $stmt->bindParam(':quantity', $quantity, $this->con::PARAM_INT, 4);
         $stmt->bindParam(':price', $price, $this->con::PARAM_STR_CHAR, 5);
         $stmt->bindParam(':total', $total, $this->con::PARAM_STR_CHAR, 6);
-        
+
 
         if ($stmt->execute()) {
             return $this->con->lastInsertId();
