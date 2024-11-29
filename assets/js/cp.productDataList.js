@@ -66,7 +66,7 @@ class ProductDataList {
             '<div class="row justify-content-center">' +
             '<div class="mb-3 col-md-6 col-sm-12">' +
             '<div class="d-flex justify-content-center bg-light rounded-5 p-2">' +
-            '<input type="text" class="w-100 border-0 mx-2" placeholder="">' +
+            '<input name="search" type="text" class="w-100 border-0 mx-2" placeholder="">' +
             '<button class="btn"><i class="fa fa-search"></i></button>' +
             '</div>' +
             '</div>' +
@@ -83,7 +83,7 @@ class ProductDataList {
     loadSearch() {
         let root = this;
         let formSearch = root.divTools.querySelector('form');
-        let inputSearch = root.divTools.querySelector('input');
+        let inputSearch = root.divTools.querySelector('input[name="search"]');
         formSearch.addEventListener('submit', event => {
             event.preventDefault();
             let search_value = inputSearch.value;
@@ -104,7 +104,7 @@ class ProductDataList {
         const merged = {
             columns: var_declared.columns.map((col, index) => {
                 console.log(col,index);
-                return { ...col, ...(var_referenc.columns[0] || {}) };
+                return { ...var_referenc.columns[0], ...(col  || {}) };
             })
         };
 

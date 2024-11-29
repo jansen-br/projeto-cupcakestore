@@ -23,7 +23,6 @@ class RootController extends AppController
         $this->view->addData([
             'costumer' => $costumer,
             'redirect' => 'root',
-            'action_cart_add' => $this->router->route('cart.add'),
             'cart' => $cart
         ]);
         $this->view->print('root::index');

@@ -13,6 +13,11 @@ $this->stop();
 
 <?php $this->start('css'); ?>
 <style>
+    input[name="search"]:focus {
+        outline: none;
+        box-shadow: none;
+    }
+
     .cash-br::before {
         content: 'R$';
         margin-right: 5px;
@@ -150,85 +155,75 @@ $this->stop();
 <script src="<?= $router->route('root') ?>/assets/js/cp.productDataList.js"></script>
 <script src="<?= $router->route('root') ?>/assets/js/mustache.js"></script>
 <script>
-    /** DATALIST */
-    const url_products_list = '<?= $router->route('product.list'); ?>';
+    function convertDecimalToCurrencyBR(entry) {
+        entry = entry.toString();
+        return entry.replace('.', ',');
+    }
 
+    function getUrlRoute(key) {
+        const routes = [{
+                'root': '<?= $router->route('root') ?>'
+            },
+            {
+                'product.list': '<?= $router->route('product.list') ?>'
+            },
+            {
+                'product.get': '<?= $router->route('product.get') ?>'
+            },
+            {
+                'product.put': '<?= $router->route('product.put') ?>'
+            },
+            {
+                'cart.add': '<?= $router->route('cart.add') ?>'
+            },
+            {
+                'costumer.render.payment.method': '<?= $router->route('costumer.render.payment.method') ?>'
+            },
+            {
+                'costumer.remove.creditcard': '<?= $router->route('costumer.remove.creditcard') ?>'
+            },
+            {
+                'costumer.set.prefered.creditcard': '<?= $router->route('costumer.set.prefered.creditcard') ?>'
+            },
+            {
+                'render.order': '<?= $router->route('render.order') ?>'
+            },
+            {
+                'finalize.order': '<?= $router->route('finalize.order') ?>'
+            },
+            {
+                'render.order.summary': '<?= $router->route('render.order.summary') ?>'
+            },
+            {
+                'list.orders': '<?= $router->route('list.orders') ?>'
+            }
+        ];
+
+        for (let url of routes) {
+            if (url.hasOwnProperty(key)) {
+                return url[key];
+            }
+        }
+    }
+    /** DATALIST */
     let products = new ProductDataList(
         $('#products'), {
-            url: url_products_list,
-            folder_image: '<?= $router->route('root'); ?>/assets/@img/',
+            url: getUrlRoute('product.list'),
+            folder_image: getUrlRoute('root') + '/assets/@img/',
             columns: [{
-                    data: 'products'
+                    data: 'product'
                 },
                 {
                     data: 'short'
                 },
                 {
-                    data: 'prices'
+                    data: 'price'
                 }
             ]
         }
     )
 
-    /** MODAL PRODUCT */
-    const modalProduct = document.getElementById('modalProduct');
-    const url_get_product = '<?= $router->route('product.get') ?>';
-    const folder_image = '<?= $router->route('root'); ?>/assets/@img/';
-
-    if (modalProduct) {
-        modalProduct.addEventListener('show.bs.modal', event => {
-            const button = event.relatedTarget;
-            const modalProductLabel = document.getElementById('modalProductLabel');
-            const mdProductImage = document.getElementById('mdProductImage');
-            const mdProductName = document.getElementById('mdProductName');
-            const mdProductShort = document.getElementById('mdProductShort');
-            const mdProductDescription = document.getElementById('mdProductDescription');
-            const mdProductId = document.getElementById('mdProductId');
-            const mdProductQuantity = document.getElementById('mdProductQuantity');
-            const mdProductPrice = document.getElementById('mdProductPrice');
-
-            let productsId = button.dataset.cpId;
-
-            mdProductName.innerText = "";
-            mdProductImage.innerHTML = "";
-            mdProductDescription.innerHTML = "";
-            mdProductId.value = 0;
-            mdProductQuantity.value = 1;
-
-
-            $.ajax({
-                url: url_get_product,
-                data: {
-                    id: productsId
-                },
-                method: 'POST',
-                success: function(response) {
-                    mdProductId.value = response.id;
-                    mdProductName.innerText = response.product;
-                    mdProductImage.innerHTML = (
-                        '<img src="' + folder_image + '/' + response.images[0].url_image + '" class="img-fluid rounded-3" >'
-
-                    );
-                    mdProductShort.innerHTML = response.short;
-                    mdProductDescription.innerHTML = response.description;
-                    mdProductPrice.innerHTML = convertDecimalToCurrencyBR(response.price);
-
-                    /** CHANGE PRICE */
-                    mdProductQuantity.addEventListener('change', (e) => {
-                        let qnt = e.target.value;
-                        let entry = (qnt * (response.price)).toFixed(2);
-                        mdProductPrice.innerHTML = convertDecimalToCurrencyBR(entry);
-                    });
-                },
-                error: function(xhr, status, error) {
-                    console.error(`Error: ${error}`);
-                }
-            });
-
-
-        })
-    }
-
+    /** REGITER COSTUMER */
     $('.input-email').mask("A", {
         translation: {
             "A": {
@@ -239,11 +234,6 @@ $this->stop();
     });
 
     $('.input-phone').mask("(99) 99999-9999");
-
-    function convertDecimalToCurrencyBR(entry) {
-        entry = entry.toString();
-        return entry.replace('.', ',');
-    }
 
     /** MODAL CART */
     const modalCart = document.getElementById('modalCart');
@@ -406,99 +396,6 @@ $this->stop();
         });
     }
 
-    /** MODAL PAYMENT METHOD */
-    document.getElementById('modalCostumerPaymentMethod').addEventListener('show.bs.modal', event => {
-        let btn = event.relatedTarget;
-        let target = event.target;
-        let route = target.dataset.cpFrameRoute;
-
-        $.ajax({
-            url: getUrlRoute(route),
-            method: 'POST',
-            success: response => {
-                console.log(response);
-
-                const template = target.querySelector('.cp-template').innerHTML;
-                const rendered = Mustache.render(template, response);
-                target.querySelector('.cp-render').innerHTML = rendered;
-                target.querySelector('.placeholder-glow').style.display = 'none';
-
-                eventSetPreferedCreditCard(
-                    target.querySelectorAll('input[name="prefered"]'),
-                    'costumer.set.prefered.creditcard'
-                );
-
-                eventRemoveItem(
-                    target.querySelectorAll('button[data-cp-method]'),
-                    'costumer.remove.creditcard'
-                );
-
-                $('#PaymentMethodNumber').mask('9999999999999999').keyup((el) => {
-
-                    let brand = getCardBrand(el.target.value);
-                    console.log(brand);
-                    document.getElementById('PaymentMethodFlag').value = brand;
-                    document.getElementById('PaymentMethodFlagLabel').dataset.cardLogo = brand;
-
-                });
-
-            },
-            error: function(xhr, status, error) {
-                console.error(`Error: ${error}`);
-            }
-        });
-    });
-
-    function showCostumerPaymentMethod(url, elem) {
-        if (!url || !elem) {
-            return false;
-        }
-
-        $.ajax({
-            url: url,
-            method: 'POST',
-            success: function(response) {
-                modalCostumerPaymentMethod.querySelector('.modal-body').innerHTML = response;
-                $('#PaymentMethodNumber').mask('9999999999999999').blur((el) => {
-                    if (el.target.value.length == 16) {
-                        let brand = getCardBrand(el.target.value);
-                        console.log(brand);
-                        document.getElementById('PaymentMethodFlag').value = brand;
-                        document.getElementById('PaymentMethodFlagLabel').innerHTML = brand;
-                    }
-                });
-                eventSetPreferedCreditCard();
-                eventRemoveItem(
-                    '#modalCostumerPaymentMethod button[data-cp-method]',
-                    'costumer.remove.creditcard'
-                );
-            },
-            error: function(xhr, status, error) {
-                console.error(`Error: ${error}`);
-            }
-        });
-    }
-
-    function eventSetPreferedCreditCard(elems, route) {
-        elems.forEach(el => {
-            el.addEventListener('change', function() {
-                const creditcard_id = this.dataset.cpCreditcardId;
-                $.ajax({
-                    url: getUrlRoute(route),
-                    method: 'POST',
-                    data: {
-                        creditcard_id: creditcard_id
-                    },
-                    success: response => console.log(response),
-                    error: function(xhr, status, error) {
-                        console.error(`Error: ${error}`);
-                    }
-                });
-            });
-        });
-    }
-
-
     function eventRemoveItem(elems, route) {
         elems.forEach(el => {
             el.addEventListener('click', function() {
@@ -526,110 +423,6 @@ $this->stop();
             });
         });
     }
-
-    function getUrlRoute(key) {
-        const routes = [{
-                'product.list': '<?= $router->route('product.list') ?>'
-            }, {
-                'costumer.render.payment.method': '<?= $router->route('costumer.render.payment.method') ?>'
-            },
-            {
-                'costumer.remove.creditcard': '<?= $router->route('costumer.remove.creditcard') ?>'
-            },
-            {
-                'costumer.set.prefered.creditcard': '<?= $router->route('costumer.set.prefered.creditcard') ?>'
-            },
-            {
-                'render.order': '<?= $router->route('render.order') ?>'
-            },
-            {
-                'finalize.order': '<?= $router->route('finalize.order') ?>'
-            },
-            {
-                'render.order.summary': '<?= $router->route('render.order.summary') ?>'
-            },
-            {
-                'list.orders': '<?= $router->route('list.orders') ?>'
-            }
-        ];
-
-        for (let url of routes) {
-            if (url.hasOwnProperty(key)) {
-                return url[key];
-            }
-        }
-    }
-
-    /** MODAL ORDER SUMMARY */
-    document.getElementById('modalOrderSummary').addEventListener('show.bs.modal', event => {
-        let btn = event.relatedTarget;
-        let order_id = btn.dataset.cpOrderId;
-        let target = event.target;
-        let route = target.dataset.cpFrameRoute;
-
-        let data = {
-            'order_id': order_id
-        };
-
-        $.ajax({
-            url: getUrlRoute(route),
-            method: 'POST',
-            data: data,
-            success: response => {
-                console.log(response);
-
-                const template = target.querySelector('.cp-template').innerHTML;
-                const rendered = Mustache.render(template, response);
-                target.querySelector('.cp-render').innerHTML = rendered;
-                target.querySelector('.placeholder-glow').style.display = 'none';
-                $('.cp-render .cash-br', target).mask('9999,00');
-                $('.cp-render .datetime', target).each(function() {
-                    let originalDatetime = $(this).text();
-                    let formattedDatetime = convertDatetime(originalDatetime);
-                    $(this).text(formattedDatetime);
-                });
-            },
-            error: function(xhr, status, error) {
-                console.error(`Error: ${error}`);
-            }
-        });
-    });
-
-    document.getElementById('modalOrderSummary').addEventListener('hidden.bs.modal', event => {
-        let target = event.target;
-        target.querySelector('.placeholder-glow').style.display = 'block';
-    });
-
-    /** MODAL ORDER LIST */
-    const modalOrderList = document.getElementById('modalOrderList').addEventListener('show.bs.modal', event => {
-        let target = event.target;
-        let frames = target.querySelectorAll('[data-cp-frame-content]');
-        let route = target.dataset.cpFrameRoute;
-
-        $.ajax({
-            url: getUrlRoute(route),
-            method: 'POST',
-            success: response => {
-                const template = target.querySelector('.cp-template').innerHTML;
-                const rendered = Mustache.render(template, response);
-                target.querySelector('.cp-render').innerHTML = rendered;
-                target.querySelector('.placeholder-glow').style.display = 'none';
-                $('.cp-render .datetime', target).each(function() {
-                    let originalDatetime = $(this).text();
-                    let formattedDatetime = convertDatetime(originalDatetime);
-                    $(this).text(formattedDatetime);
-                });
-            },
-            error: function(xhr, status, error) {
-                console.error(`Error: ${error}`);
-            }
-        });
-    });
-
-    document.getElementById('modalOrderList').addEventListener('hidden.bs.modal', event => {
-        let target = event.target;
-        target.querySelector('.placeholder-glow').style.display = 'block';
-    });
 
 
     /** REMOVE ELEMENT TARGET */
@@ -686,67 +479,6 @@ $this->stop();
     const modalId = <?= !empty($modal) ? json_encode($modal) : 'null' ?>;
     openModal(modalId);
 
-    /** CREDIT CARD FLAG */
-    function getCardBrand(cardNumber) {
-        let card_number = cardNumber.replace(/[^0-9]/g, '');
-
-        brands = [{
-                'pattern': /^402941|^402942/,
-                'brand': 'nubank'
-            },
-            {
-                'pattern': /^527600|^527601|^555555/,
-                'brand': 'nubank'
-            },
-            {
-                'pattern': /^4[0-9]{12}(?:[0-9]{3})?$/,
-                'brand': 'visa'
-            },
-            {
-                'pattern': /^5[1-5][0-9]{14}$/,
-                'brand': 'mastercard'
-            },
-            {
-                'pattern': /^3[47][0-9]{13}$/,
-                'brand': 'amex'
-            },
-            {
-                'pattern': /^3(?:0[0-5]|[68][0-9])[0-9]{11}$/,
-                'brand': 'diners_club'
-            },
-            {
-                'pattern': /^6(?:011|5[0-9]{2})[0-9]{12}$/,
-                'brand': 'discover'
-            },
-            {
-                'pattern': /^(?:2131|1800|35\d{3})\d{11}$/,
-                'brand': 'jcb'
-            },
-            {
-                'pattern': /^(4011(78|79)|4312(74|75)|4389(35|36)|4514(16|17)|4576(31|32)|4576(35|36)|5041(75|76)|6277(00|01)|6363(68|69)|6504(06|07|08)|6505(31|32|33|34|35)|6507(01|02|03|04|05)|6509(16|17|18|19)|6516(51|52)|6550(00|01|02))\d{10,12}$/,
-                'brand': 'elo'
-            }
-        ];
-
-        for (let item of brands) {
-            if (item.pattern.test(card_number)) {
-
-                return item.brand;
-            }
-        }
-        return 'unknown';
-
-        /*
-        Nubank: 4029411234567890 | 5276001234567890 | 5555551234567890
-        Amex: 378282246310005
-        Diners Club: 30569309025904
-        Discover: 6011111111111117
-        JCB: 3530111333300000
-        Elo: 4514161234567890 | 6363681234567890123 | 6507011234567890
-        
-        */
-    }
-
     /** DATETIME CONVERTER */
     function convertDatetime(mysqlDateTime) {
         // Dividir a data e a hora
@@ -759,4 +491,8 @@ $this->stop();
         return `${day}/${month}/${year} ${time}`;
     }
 </script>
+<script src="<?= $router->route('root') ?>/assets/js/cp.md.product.js"></script>
+<script src="<?= $router->route('root') ?>/assets/js/cp.md.order.list.js"></script>
+<script src="<?= $router->route('root') ?>/assets/js/cp.md.order.summary.js"></script>
+<script src="<?= $router->route('root') ?>/assets/js/cp.md.payment.js"></script>
 <?php $this->stop(); ?>

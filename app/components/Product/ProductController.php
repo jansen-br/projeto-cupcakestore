@@ -25,7 +25,7 @@ class ProductController extends AppController
         $this->data['images'] = $this->model->getProductsImages();
 
         header('Content-Type: application/json;charset=utf-8');
-        echo json_encode($this->data);
+        echo json_encode(['product' => $this->data]);
     }
 
     public function list(): void
