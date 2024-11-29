@@ -21,12 +21,27 @@ define("DB_CONFIG", [
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
             PDO::ATTR_CASE => PDO::CASE_NATURAL
         ]
+    ],
+    'hostinger_cupcakestore' => [
+        "driver" => "mysql",
+        "host" => "srv1659.hstgr.io",
+        "port" => "3306",
+        "dbname" => "u343299778_cupcakestore",
+        "username" => "u343299778_cakelovers",
+        "passwd" => "Cupcake@bsb.24",
+        "options" => [
+            PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8",
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
+            PDO::ATTR_CASE => PDO::CASE_NATURAL
+        ]
     ]
 ]);
 
 define('SCHEMA', 'cupcakestore');
 
 define('HOST', 'http://local.cupcake.com.br');
+// define('HOST', 'https://cupcakestore.org');
 
 define('APP', ROOT . DS . 'app');
 

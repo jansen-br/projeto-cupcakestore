@@ -20,14 +20,15 @@
                         <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionPaymentMethod">
                             <div class="accordion-body">
                                 <form action="<?= $router->route('costumer.registre.creditcard') ?>" method="post">
-                                    <div class="form-floating mb-3">
+                                    <div class="form-floating mb-3 positin-relative">
                                         <input name="number" type="text" class="form-control" id="PaymentMethodNumber" placeholder="Número do cartão de crédito" required>
                                         <label for="PaymentMethodNumber">Número</label>
+                                        <div class="small position-absolute top-50 end-0 translate-middle">
+                                            <div id="PaymentMethodFlagLabel" data-card-logo="unknown" class="creditcard-logo"></div>
+                                            <input id="PaymentMethodFlag" name="flag" type="hidden">
+                                        </div>
                                     </div>
-                                    <div class="small">
-                                        <div id="PaymentMethodFlagLabel"></div>
-                                        <input id="PaymentMethodFlag" name="flag" type="hidden">
-                                    </div>
+
                                     <!-- Submit button -->
                                     <div class="d-grid gap-2">
                                         <input type="hidden" name="_method" value="PUT">
@@ -45,7 +46,7 @@
                             <div class="row">
                                 <div class="col-10">
                                     <div>{{number}}</div>
-                                    <div class="creditcard-{{flag}}">{{flag}}</div>
+                                    <div data-card-logo="{{flag}}" class="creditcard-logo" title="{{flag}}"></div>
                                     <div class="small">
                                         <button
                                             class="btn btn-sm btn-danger"
