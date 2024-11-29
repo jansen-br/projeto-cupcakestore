@@ -20,15 +20,24 @@
                         <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionPaymentMethod">
                             <div class="accordion-body">
                                 <form action="<?= $router->route('costumer.registre.creditcard') ?>" method="post">
-                                    <div class="form-floating mb-3 positin-relative">
-                                        <input name="number" type="text" class="form-control" id="PaymentMethodNumber" placeholder="Número do cartão de crédito" required>
+                                    <div class="form-floating positin-relative">
+                                        <input name="number" type="text" class="form-control" id="PaymentMethodNumber" placeholder="Número do cartão de crédito" required autocomplete="off">
                                         <label for="PaymentMethodNumber">Número</label>
                                         <div class="small position-absolute top-50 end-0 translate-middle">
                                             <div id="PaymentMethodFlagLabel" data-card-logo="unknown" class="creditcard-logo"></div>
                                             <input id="PaymentMethodFlag" name="flag" type="hidden">
                                         </div>
                                     </div>
-
+                                    <div class="form-text">Utilize estes números para exemplo:
+                                        Nubank (16): 4029411234567890 | 5276001234567890 | 5555551234567890
+                                        Amex (15): 378282246310005
+                                        Diners Club (14): 30569309025904
+                                        Discover (16): 6011111111111117
+                                        JCB (16): 3530111333300000
+                                        Elo (16): 4514161234567890 | 6363681234567890123 | 6507011234567890
+                                        Visa (16): 4111111111111111 
+                                        Mastercard (16): 5111111111111111
+                                    </div>
                                     <!-- Submit button -->
                                     <div class="d-grid gap-2">
                                         <input type="hidden" name="_method" value="PUT">
@@ -45,8 +54,8 @@
                         <div id="creditCard_{{id}}" class="border p-2 mb-3">
                             <div class="row">
                                 <div class="col-10">
-                                    <div>{{number}}</div>
-                                    <div data-card-logo="{{flag}}" class="creditcard-logo" title="{{flag}}"></div>
+                                    <div class="mb-1">{{number}}</div>
+                                    <div data-card-logo="{{flag}}" class="creditcard-logo mb-1" title="{{flag}}" title="{{flag}}"></div>
                                     <div class="small">
                                         <button
                                             class="btn btn-sm btn-danger"

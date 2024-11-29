@@ -432,16 +432,15 @@ $this->stop();
                     'costumer.remove.creditcard'
                 );
 
-                $('#PaymentMethodNumber').keyup((el) => {
-                    if (el.target.value.length <= 16) {
-                        let brand = getCardBrand(el.target.value);
-                        console.log(brand);
-                        document.getElementById('PaymentMethodFlag').value = brand;
-                        document.getElementById('PaymentMethodFlagLabel').dataset.cardLogo = brand;
-                    } else {
-                        return false;
-                    }
+                $('#PaymentMethodNumber').mask('9999999999999999').keyup((el) => {
+
+                    let brand = getCardBrand(el.target.value);
+                    console.log(brand);
+                    document.getElementById('PaymentMethodFlag').value = brand;
+                    document.getElementById('PaymentMethodFlagLabel').dataset.cardLogo = brand;
+
                 });
+
             },
             error: function(xhr, status, error) {
                 console.error(`Error: ${error}`);

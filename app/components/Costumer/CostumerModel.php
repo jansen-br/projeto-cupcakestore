@@ -180,7 +180,7 @@ class CostumerModel extends AppModel
     public function getCreditCards(int $costumers_id): array
     {
 
-        $sql = 'SELECT id, costumers_id, CONCAT("XXX-XXXX-XXXX-", RIGHT(number, 4)) as number, flag, prefered FROM ' . self::TB_CREDITCARD . ' WHERE costumers_id = :costumers_id';
+        $sql = 'SELECT id, costumers_id, number, flag, prefered FROM ' . self::TB_CREDITCARD . ' WHERE costumers_id = :costumers_id';
 
         $stmt = $this->con->prepare($sql);
         $stmt->bindParam(':costumers_id', $costumers_id, $this->con::PARAM_INT, 11);
@@ -195,7 +195,7 @@ class CostumerModel extends AppModel
     public function getPreferedCreditCard(int $costumers_id): array
     {
 
-        $sql = 'SELECT id, costumers_id, CONCAT("XXX-XXXX-XXXX-", RIGHT(number, 4)) as number, flag, prefered FROM ' . self::TB_CREDITCARD . ' WHERE costumers_id = :costumers_id AND prefered = 1';
+        $sql = 'SELECT id, costumers_id, number, flag, prefered FROM ' . self::TB_CREDITCARD . ' WHERE costumers_id = :costumers_id AND prefered = 1';
 
         $stmt = $this->con->prepare($sql);
         $stmt->bindParam(':costumers_id', $costumers_id, $this->con::PARAM_INT, 11);

@@ -86,10 +86,39 @@ class CostumerController extends AppController
 
         if (!empty($this->costumer['id'])) {
             $array['creditcard'] = $this->model->getCreditCards($this->costumer['id']);
+            
+            if (!empty($array['creditcard'])) {
+                foreach ($array['creditcard'] as $k => $v) {
+                    $array['creditcard'][$k]['number'] = $this->maskCrediCardNumber($v['number']);
+                }
+            }
         }
 
         header('Content-Type: application/json;charset=utf-8');
         echo json_encode($array);
+    }
+
+    private function maskCrediCardNumber(string $number): string
+    {
+        $response = 'XXXXXXXXXXXXXXXX';
+
+        if (strlen($number) > 4) {
+            switch (strlen($number)) {
+                case 16:
+                    $response = 'XXXXX-XXXXX-XXXXX-' . substr($number, -4);
+                    break;
+                case 15:
+                    $response = 'XXXX-XXXXXX-' . substr($number, -5);
+                    break;
+                case 14:
+                    $response = 'XXXX-XXXXXX-' . substr($number, -4);
+                    break;
+                default:
+                    $response = str_pad(substr($number, -4), strlen($number), "X", STR_PAD_LEFT);
+                    break;
+            }
+        }
+        return $response;
     }
 
     public function renderAddressDelivery()

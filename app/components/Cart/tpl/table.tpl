@@ -41,7 +41,7 @@
         <button id="cartBtnNext" class="btn btn-primary" type="button" disabled>Finalizar pedido</button>
     <?php endif; ?>
     <?php if (empty($costumer) && !empty($data['products'])): ?>
-        <button id="cartBtnNext" class="btn btn-primary" type="button" data-bs-target="#modaLogin" data-bs-toggle="modal">Finalizar pedido</button>
+        <button id="cartBtnNext" class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#modalLogin">Finalizar pedido</button>
     <?php endif; ?>
     <?php if (!empty($costumer) && !empty($data['products'])): ?>
         <button id="cartBtnNext" class="btn btn-primary" type="button" data-bs-target="#modalOrder" data-bs-toggle="modal">Finalizar pedido</button>
