@@ -7,6 +7,8 @@ $this->start('header');
 $this->insert('root::header');
 $this->stop();
 
+
+
 ?>
 
 <?php $this->start('css'); ?>
@@ -116,16 +118,12 @@ $this->stop();
             opacity: .2;
         }
     }
-
-    /* 'unknown','visa','mastercard','elo','amex','diners_club','discover','jcb' */
 </style>
 <?php $this->stop(); ?>
 
 <?php $this->insert('root::carousel'); ?>
 
 <article class="container">
-    <a href="#" data-bs-target="modalAlert" data-bs-toggle="modal">Test</a>
-    <?php $this->insert('root::tools'); ?>
 
     <div id="products" class="row"></div>
 
@@ -161,6 +159,9 @@ $this->stop();
             folder_image: '<?= $router->route('root'); ?>/assets/@img/',
             columns: [{
                     data: 'products'
+                },
+                {
+                    data: 'short'
                 },
                 {
                     data: 'prices'
@@ -528,6 +529,8 @@ $this->stop();
 
     function getUrlRoute(key) {
         const routes = [{
+                'product.list': '<?= $router->route('product.list') ?>'
+            }, {
                 'costumer.render.payment.method': '<?= $router->route('costumer.render.payment.method') ?>'
             },
             {

@@ -7,16 +7,21 @@ class ProductDataList {
         this.recordsTotal = 0;
         this.recordsFiltered = 0;
 
+        this.loadStruct();
+        this.loadTools();
         this.#_ajax();
+        this.renderStruct();
     }
 
-    #_ajax() {
+    #_ajax(vars) {
         let root = this;
         $.ajax({
             url: root.args.url,
             method: 'GET',
+            data: vars,
             success: function (response) {
-                root.loopResponse(response);
+                root.clearData();
+                root.loadProducts(response);
             },
             error: function (xhr, status, error) {
                 console.error(`Error: ${error}`);
@@ -24,11 +29,104 @@ class ProductDataList {
         });
     }
 
-    loopResponse(response) {
+    loadStruct() {
         let root = this;
-        response.data.forEach((item, index) => {
-            root.renderCards(item);
-        });
+        let suffix_id = root.generateRandomId();
+
+        root.divTools = document.createElement('div');
+        root.divProducts = document.createElement('div');
+        root.divPages = document.createElement('div');
+
+        root.divTools.id = "dataListTool_" + suffix_id;
+        root.divProducts.id = "dataListProducts_" + suffix_id;
+        root.divProducts.setAttribute('class', 'row justify-content-center');
+        root.divPages.id = "dataListPages_" + suffix_id;
+    }
+
+    loadProducts(response) {
+        let root = this;
+        if (response.data.length > 0) {
+            response.data.forEach((item, index) => {
+                root.renderCards(item);
+            });
+        } else {
+            root.renderNoDataFound();
+        }
+    }
+
+    generateRandomId(length = 6) {
+        return Math.random().toString(36).substring(2, length + 2);
+    }
+
+    loadTools() {
+        let root = this;
+        let html = (
+            '<div class="my-5">' +
+            '<form class="cp-form-search" action="">' +
+            '<div class="row justify-content-center">' +
+            '<div class="mb-3 col-md-6 col-sm-12">' +
+            '<div class="d-flex justify-content-center bg-light rounded-5 p-2">' +
+            '<input type="text" class="w-100 border-0 mx-2" placeholder="">' +
+            '<button class="btn"><i class="fa fa-search"></i></button>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '</form>' +
+            '</div>'
+        );
+
+        root.divTools.innerHTML = html;
+
+        root.loadSearch();
+    }
+
+    loadSearch() {
+        let root = this;
+        let formSearch = root.divTools.querySelector('form');
+        let inputSearch = root.divTools.querySelector('input');
+        formSearch.addEventListener('submit', event => {
+            event.preventDefault();
+            let search_value = inputSearch.value;
+            this.#_ajax(root.loadSearchData(search_value));
+            console.log();
+        })
+    }
+
+    loadSearchData(search) {
+        let root = this;
+        let var_declared = {columns: root.args.columns};
+        let var_referenc = {
+            "columns":
+                [
+                    { "data": "", "name": "", "searchable": "true", "orderable": "true", "search": { "value": "", "regex": "false" } }
+                ]
+        };
+        const merged = {
+            columns: var_declared.columns.map((col, index) => {
+                console.log(col,index);
+                return { ...col, ...(var_referenc.columns[0] || {}) };
+            })
+        };
+
+        merged.search = { "value": search, "regex": "false" };
+        console.log(merged);
+        return merged;
+    }
+
+    clearData() {
+        let root = this;
+        root.divProducts.innerHTML = "";
+    }
+
+    renderNoDataFound() {
+        let root = this;
+        let html = (
+            '<div class="p-5 text-center h3">' +
+            'Nenhum produto encontrado!' +
+            '</div>'
+        );
+
+        $(root.divProducts).html(html);
     }
 
     renderCards(data) {
@@ -81,8 +179,14 @@ class ProductDataList {
         card.appendChild(price);
         // card.appendChild(action);
 
-        root.container.append(col);
-        root.container.attr('class', 'row justify-content-center');
+        root.divProducts.append(col);
+    }
+
+    renderStruct() {
+        let root = this;
+        root.container.append(root.divTools);
+        root.container.append(root.divProducts);
+        root.container.append(root.divPages);
     }
 
 }
