@@ -34,13 +34,22 @@ class ProductDataList {
         let suffix_id = root.generateRandomId();
 
         root.divTools = document.createElement('div');
+        root.divContainerProducts = document.createElement('div');
         root.divProducts = document.createElement('div');
         root.divPages = document.createElement('div');
 
         root.divTools.id = "dataListTool_" + suffix_id;
+        root.divTools.className = "bg-cp-primary-100 py-5";
+
+        root.divContainerProducts.className = "container";
+        
+        root.divProducts.className = "row";
         root.divProducts.id = "dataListProducts_" + suffix_id;
-        root.divProducts.setAttribute('class', 'row justify-content-center');
+        root.divProducts.className = 'row justify-content-center';
+        
         root.divPages.id = "dataListPages_" + suffix_id;
+
+        root.divContainerProducts.append(root.divProducts);
     }
 
     loadProducts(response) {
@@ -61,10 +70,10 @@ class ProductDataList {
     loadTools() {
         let root = this;
         let html = (
-            '<div class="my-5">' +
-            '<form class="cp-form-search" action="">' +
+            '<div>' +
+            '<form class="cp-form-search container" action="">' +
             '<div class="row justify-content-center">' +
-            '<div class="mb-3 col-md-6 col-sm-12">' +
+            '<div class="col-md-6 col-sm-12">' +
             '<div class="d-flex justify-content-center bg-light rounded-5 p-2">' +
             '<input name="search" type="text" class="w-100 border-0 mx-2" placeholder="">' +
             '<button class="btn"><i class="fa fa-search"></i></button>' +
@@ -185,8 +194,9 @@ class ProductDataList {
 
     renderStruct() {
         let root = this;
+        
         root.container.append(root.divTools);
-        root.container.append(root.divProducts);
+        root.container.append(root.divContainerProducts);
         root.container.append(root.divPages);
     }
 

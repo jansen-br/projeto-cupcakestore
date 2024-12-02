@@ -7,13 +7,25 @@
     <div class="carousel-inner">
         <div class="carousel-item active" data-bs-interval="5000" style="--cp-bg-url: url('<?= $router->route('root'); ?>/assets/img/frame1.jpg')">
             <div class="d-flex justify-content-center align-items-center h-100">
-                <div>
-                    <img src="<?= $router->route('root') ?>/assets/img/logo2.svg">
+                <div class="col-8 text-center">
+                    <img class="img-fluid" src="<?= $router->route('root') ?>/assets/img/logo2.svg">
                 </div>
             </div>
         </div>
-        <div class="carousel-item" data-bs-interval="5000" style="--cp-bg-url: url('<?= $router->route('root'); ?>/assets/img/frame2.jpg')"></div>
-        <div class="carousel-item" style="--cp-bg-url: url('<?= $router->route('root'); ?>/assets/img/frame3.jpg')"></div>
+        <div class="carousel-item" data-bs-interval="5000" style="--cp-bg-url: url('<?= $router->route('root'); ?>/assets/img/frame2.jpg')">
+            <div class="container h-100">
+                <div class="d-flex justify-content-end align-items-center h-100">
+                    <h1 class="display-2 text-cp-100 p-2">Pronta entrega!</h1>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item" style="--cp-bg-url: url('<?= $router->route('root'); ?>/assets/img/frame3.jpg')">
+            <div class="container h-100">
+                <div class="row h-100">
+                    <div class="col-md-5 d-flex align-items-center"><h1 class="display-2 text-light p-2">Cupcakes de vários sabores</h1></div>
+                </div>
+            </div>
+        </div>
     </div>
     <button class="carousel-control-prev" type="button" data-bs-target="#cpCarousel" data-bs-slide="prev">
         <span class="carousel-control-prev-icon"></span>

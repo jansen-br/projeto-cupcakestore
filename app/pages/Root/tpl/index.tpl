@@ -131,9 +131,9 @@ $this->stop();
 
 <?php $this->insert('root::carousel'); ?>
 
-<article class="container">
+<article>
 
-    <div id="products" class="row"></div>
+    <div id="products" class="bg-cp-accent"></div>
 
     <?php
     if (empty($costumer)) {
@@ -213,9 +213,14 @@ $this->stop();
         $('#products'), {
             url: getUrlRoute('product.list'),
             folder_image: getUrlRoute('root') + '/assets/@img/',
-            order: [
-                {column: 0, dir: 'asc'},
-                {column: 1, dir: 'Desc'}
+            order: [{
+                    column: 0,
+                    dir: 'asc'
+                },
+                {
+                    column: 1,
+                    dir: 'Desc'
+                }
             ],
             columns: [{
                     data: 'product'

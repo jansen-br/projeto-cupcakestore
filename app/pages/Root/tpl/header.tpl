@@ -1,4 +1,4 @@
-<nav class="navbar sticky-top bg-cp-primary">
+<nav class="navbar sticky-top bg-cp-primary-100">
     <div class="container">
         <div class="w-100 d-flex justify-content-between">
             <a class="navbar-brand" href="#">

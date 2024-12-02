@@ -12,7 +12,7 @@
     <?= $this->section('css'); ?>
 </head>
 
-<body class="bg-cp-accent">
+<body>
     <!-- <div id="cpHeader" class="position-absolute w-100" style="z-index: 10;"> -->
         <?= $this->section('header') ?>
     <!-- </div> -->
@@ -21,7 +21,7 @@
     </div>
     <div id="cpFooter">
         <footer class="text-center text-lg-start">
-            <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.05);">
+            <div class="text-center p-3 bg-cp-accent-100">
                 © 2024 Copyright:
                 <a class="text-body" href="#">Jansen Lira</a>
             </div>
