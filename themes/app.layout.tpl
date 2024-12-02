@@ -13,9 +13,9 @@
 </head>
 
 <body class="bg-cp-accent">
-    <div id="cpHeader" class="position-absolute w-100" style="z-index: 10;">
+    <!-- <div id="cpHeader" class="position-absolute w-100" style="z-index: 10;"> -->
         <?= $this->section('header') ?>
-    </div>
+    <!-- </div> -->
     <div id="cpBody">
         <?= $this->section('content') ?>
     </div>

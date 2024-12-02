@@ -28,15 +28,19 @@
                                             <input id="PaymentMethodFlag" name="flag" type="hidden">
                                         </div>
                                     </div>
-                                    <div class="form-text">Utilize estes números para exemplo:
-                                        Nubank (16): 4029411234567890 | 5276001234567890 | 5555551234567890
-                                        Amex (15): 378282246310005
-                                        Diners Club (14): 30569309025904
-                                        Discover (16): 6011111111111117
-                                        JCB (16): 3530111333300000
-                                        Elo (16): 4514161234567890 | 6363681234567890123 | 6507011234567890
-                                        Visa (16): 4111111111111111 
-                                        Mastercard (16): 5111111111111111
+                                    <div class="form-text small">
+                                        <p>Utilize estes números para exemplo:</p>
+                                        <ul>
+                                            <li>Nubank (16): 4029411234567890 | 5276001234567890 | 5555551234567890</li>
+                                            <li>Amex (15): 378282246310005</li>
+                                            <li>Diners Club (14): 30569309025904</li>
+                                            <li>Discover (16): 6011111111111117</li>
+                                            <li>JCB (16): 3530111333300000</li>
+                                            <li>Elo (16): 6363681234567890123</li>
+                                            <li>Visa (16): 4111111111111111</li>
+                                            <li>Mastercard (16): 5111111111111111</li>
+
+                                        </ul>
                                     </div>
                                     <!-- Submit button -->
                                     <div class="d-grid gap-2">

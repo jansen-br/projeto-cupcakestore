@@ -9,7 +9,7 @@ class ProductDataList {
 
         this.loadStruct();
         this.loadTools();
-        this.#_ajax();
+        this.#_ajax(this.loadSearchData());
         this.renderStruct();
     }
 
@@ -92,24 +92,25 @@ class ProductDataList {
         })
     }
 
-    loadSearchData(search) {
+    loadSearchData(search = "") {
         let root = this;
-        let var_declared = {columns: root.args.columns};
-        let var_referenc = {
+        let columns_declared = {columns: root.args.columns};
+        let order_declared = root.args.order;
+        let columns_referenc = {
             "columns":
                 [
                     { "data": "", "name": "", "searchable": "true", "orderable": "true", "search": { "value": "", "regex": "false" } }
                 ]
         };
         const merged = {
-            columns: var_declared.columns.map((col, index) => {
-                console.log(col,index);
-                return { ...var_referenc.columns[0], ...(col  || {}) };
-            })
+            columns: columns_declared.columns.map((col, index) => {
+                return { ...columns_referenc.columns[0], ...(col  || {}) };
+            }),
+            order: order_declared
         };
 
         merged.search = { "value": search, "regex": "false" };
-        console.log(merged);
+        // console.log(merged);
         return merged;
     }
 

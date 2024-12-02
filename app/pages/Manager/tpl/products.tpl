@@ -186,20 +186,23 @@ $this->layout('adm.layout', ['title' => 'Principal']);
                         }
                     }).done(function(data) {
                         if (data) {
-                            
-                            modalProductForm.style.display = 'block';
-                            modalProductSpinner.classList.toggle("d-none");
-                            // mdCode.disabled = true;
+                            if (data.product.id) {
+                                data = data.product;
 
-                            mdProduct.value = data.product;
-                            mdCode.value = data.code;
-                            mdShort.value = data.short;
-                            mdDescription.previousSibling.innerHTML = data.description;
-                            mdDescription.value = data.description;
-                            mdPrice.value = convertDecimalToCurrency(data.price);
-                            mdId.value = data.id;
+                                modalProductForm.style.display = 'block';
+                                modalProductSpinner.classList.toggle("d-none");
+                                // mdCode.disabled = true;
 
-                            previewImages.createThumbnails(data.images, url_images);
+                                mdProduct.value = data.product;
+                                mdCode.value = data.code;
+                                mdShort.value = data.short;
+                                mdDescription.previousSibling.innerHTML = data.description;
+                                mdDescription.value = data.description;
+                                mdPrice.value = convertDecimalToCurrency(data.price);
+                                mdId.value = data.id;
+
+                                previewImages.createThumbnails(data.images, url_images);
+                            }
                         }
                     });
                 }

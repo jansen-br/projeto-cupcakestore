@@ -1,5 +1,5 @@
 <!-- Modal Payment -->
-<div class="modal fade" id="modalOrder" tabindex="-1" aria-labelledby="modalOrderLabel">
+<div class="modal fade" id="modalOrder" tabindex="-1">
     <div class="modal-dialog modal-hd">
         <div class="modal-content">
             <div class="modal-header justify-content-between bg-cp-primary text-white">

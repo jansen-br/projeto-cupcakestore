@@ -69,14 +69,16 @@ class OrderModel extends AppModel
         return [];
     }
 
-    public function registerOrder($costumers_id, $total_amount, $status): int
+    public function registerOrder($costumers_id, $total_amount, $status, $address, $payment): int
     {
 
-        $sql = 'INSERT INTO ' . self::COSTUMER_ORDERS . ' (costumers_id, total_amount, status) VALUES (:costumers_id, :total_amount, :status)';
+        $sql = 'INSERT INTO ' . self::COSTUMER_ORDERS . ' (costumers_id, total_amount, status, address, payment) VALUES (:costumers_id, :total_amount, :status, :address, :payment)';
         $stmt = $this->con->prepare($sql);
         $stmt->bindParam(':costumers_id', $costumers_id, $this->con::PARAM_INT, 11);
         $stmt->bindParam(':total_amount', $total_amount, $this->con::PARAM_STR_CHAR, 10);
         $stmt->bindParam(':status', $status, $this->con::PARAM_STR_CHAR, 50);
+        $stmt->bindParam(':address', $address, $this->con::PARAM_STR_CHAR, 550);
+        $stmt->bindParam(':payment', $payment, $this->con::PARAM_STR_CHAR, 150);
 
         if ($stmt->execute()) {
             return $this->con->lastInsertId();

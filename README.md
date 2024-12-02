@@ -39,8 +39,7 @@ O sistema foi desenvolvido utilizando **PHP** e conta com a contribuição das s
 
 O banco de dados foi modelado para atender às funcionalidades do sistema, incluindo a gestão de usuários, produtos e pedidos. Abaixo está o modelo SQL utilizado no projeto:
 
-![Modelo SQL do Banco de Dados](./path/to/sql-model-image.png)
+![Modelo SQL do Banco de Dados](./sql/Diagrama-ER.png)
 
-> Substitua `./path/to/sql-model-image.png` pelo caminho real da imagem do modelo SQL no repositório.
 
 

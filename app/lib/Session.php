@@ -21,10 +21,12 @@ class Session {
     }
 
     // Remove um valor da sessão
-    public static function remove($key) {
+    public static function remove($key): bool {
         if (isset($_SESSION[$key])) {
             unset($_SESSION[$key]);
+            return true;
         }
+        return false;
     }
 
     // Destroi a sessão

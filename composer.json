@@ -20,7 +20,9 @@
     "require": {
         "php": ">=8.0",
         "coffeecode/router": "2.0.*",
-        "league/plates": "3.*",
-        "phpmailer/phpmailer": "dev-master"
+        "league/plates": "3.*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "11.5.x-dev"
     }
 }

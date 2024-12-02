@@ -203,7 +203,7 @@ class CostumerController extends AppController
                 Alert::set('Cartão registrado!', 'success');
             }
         } catch (Exception $e) {
-            Alert::set($e->getMessage(), 'warning');
+            Alert::set('Erro ao registrar forma de pagamento!', 'warning');
         }
 
         $this->view->setModal('itemCostumerPaymentMethod');

@@ -11,6 +11,7 @@ class AppController
     protected Router $router;
     protected AppView $view;
     protected object $model;
+    protected $session;
     
     public function __construct(Router $router)
     {

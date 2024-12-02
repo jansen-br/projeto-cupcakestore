@@ -47,7 +47,7 @@ class ManagerController extends AppController
     public function renderProducts(): void
     {
         $this->view->addData([
-            'redirect' => 'manager::products',
+            'redirect' => 'manager.products',
             'url_images' => $this->router->route('root') . '/assets/@img/'
         ]);
         $this->view->print('manager::products');

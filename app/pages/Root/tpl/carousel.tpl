@@ -5,7 +5,13 @@
         <button type="button" data-bs-target="#cpCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
     </div>
     <div class="carousel-inner">
-        <div class="carousel-item active" data-bs-interval="5000" style="--cp-bg-url: url('<?= $router->route('root'); ?>/assets/img/frame1.jpg')"></div>
+        <div class="carousel-item active" data-bs-interval="5000" style="--cp-bg-url: url('<?= $router->route('root'); ?>/assets/img/frame1.jpg')">
+            <div class="d-flex justify-content-center align-items-center h-100">
+                <div>
+                    <img src="<?= $router->route('root') ?>/assets/img/logo2.svg">
+                </div>
+            </div>
+        </div>
         <div class="carousel-item" data-bs-interval="5000" style="--cp-bg-url: url('<?= $router->route('root'); ?>/assets/img/frame2.jpg')"></div>
         <div class="carousel-item" style="--cp-bg-url: url('<?= $router->route('root'); ?>/assets/img/frame3.jpg')"></div>
     </div>

@@ -50,6 +50,7 @@ class ProductController extends AppController
 
     public function put($vars): void
     {
+        // de($vars);die;
         try {
 
             $image = new ImageUploader2(self::LOCAL_UPLOAD_IMAGE);
@@ -85,8 +86,6 @@ class ProductController extends AppController
                     $product_images_id[] = $this->model->addProductImage($last_id, $target_path);
                 }
             }
-
-
 
             Alert::set('Produto cadastrado com sucesso!', 'success');
         } catch (Exception $e) {

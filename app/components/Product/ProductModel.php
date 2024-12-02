@@ -110,14 +110,15 @@ class ProductModel extends AppModel
             return 0;
         }
 
-        $date_registry = date('Y-m-d');
-        $sql = 'UPDATE ' . self::PRODUCTS . ' SET product = :product, short = :short, description = :description, price = :price WHERE id = :id';
+        $date = date('Y-m-d H:i:s');
+        $sql = 'UPDATE ' . self::PRODUCTS . ' SET product = :product, short = :short, description = :description, price = :price, date_modify = :date_modify WHERE id = :id';
         $stmt = $this->con->prepare($sql);
         $stmt->bindParam(':id', $this->id, $this->con::PARAM_INT, 11);
         $stmt->bindParam(':product', $this->product, $this->con::PARAM_STR_CHAR, 200);
         $stmt->bindParam(':short', $this->short, $this->con::PARAM_STR_CHAR, 250);
         $stmt->bindParam(':description', $this->description, $this->con::PARAM_STR);
         $stmt->bindParam(':price', $this->price, $this->con::PARAM_STR_CHAR, 10);
+        $stmt->bindParam(':date_modify', $date, $this->con::PARAM_STR_CHAR, 18);
         if ($stmt->execute()) {
             return $this->id;
         }

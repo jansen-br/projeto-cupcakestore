@@ -48,14 +48,34 @@ class OrderController extends CostumerController
     public function finalizeOrder($vars)
     {
         try {
+            if(!$this->costumer['id']){
+                throw new Exception('Cliente não cadastrado');
+            }
+
             $cart = new CartController($this->router);
+            $costumer_model = new CostumerModel();
+
             $order = $cart->calcProducts();
+            $costumer_payment = $costumer_model->getPreferedCreditCard($this->costumer['id']);
+            $costumer_address = $costumer_model->getPreferedAddress($this->costumer['id']);
+
+            if(empty($costumer_payment)){
+                $this->view->setModal('itemCostumerPaymentMethod');
+                throw new Exception('Método de pagamento não cadastrado!');
+            }
+
+            if(empty($costumer_address)){
+                $this->view->setModal('itemCostumerAddress');
+                throw new Exception('Endereço de entrega não cadastrado!');
+            }
 
             if (!empty($order)) {
                 $order_id = $this->model->registerOrder(
                     $this->costumer['id'],
                     convertCurrencyToDecimal($order['total']),
-                    'paid'
+                    'paid',
+                    json_encode($costumer_address),
+                    json_encode($costumer_payment)
                 );
                 if ($order_id && !empty($order['products'])) {
                     foreach ($order['products'] as $v) {
@@ -68,15 +88,17 @@ class OrderController extends CostumerController
                         );
                     }
                 }
+            }else{
+                throw new Exception('Pedido não foi definido!');
             }
-
+            
+            Session::remove('cart');
+            $this->view->setModal('itemListOrders');
             Alert::set('Pedido realizado!', 'success');
         } catch (Exception $e) {
             Alert::set($e->getMessage(), 'warning');
         }
-
-        Session::remove('cart');
-        $this->view->setModal('itemListOrders');
+        
         $this->router->redirect('root');
     }
 
